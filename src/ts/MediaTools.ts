@@ -17,4 +17,21 @@ export class MediaTools {
       }
     });
   }
+
+  static async getAudio(): Promise<MediaStream> {
+    return await new Promise((resolve, reject) => {
+      if (navigator.mediaDevices) {
+        try {
+          const audio = navigator.mediaDevices.getUserMedia({
+            audio: true,
+          });
+          resolve(audio);
+        } catch (error) {
+          reject(new Error("Meida in not supported by this browser."));
+        }
+      } else {
+        reject(new Error("Meida in not supported by this browser."));
+      }
+    });
+  }
 }

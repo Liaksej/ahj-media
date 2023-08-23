@@ -4,7 +4,7 @@ export class Message {
     public text: string,
     public date?: number,
     public video?: Blob,
-    public audio?: Blob,
+    public audio?: MediaStream,
     public geo?:
       | string
       | {
@@ -72,16 +72,33 @@ export class Message {
         });
     }
     if (this.audio) {
+      const audioRecorder = new MediaRecorder(this.audio);
+      const chunks: Blob[] = [];
+
+      audioRecorder.addEventListener("start", () => {
+        console.log("start");
+      });
+
+      audioRecorder.addEventListener("dataavailable", (event) => {
+        chunks.push(event.data);
+      });
+
+      audioRecorder.addEventListener("stop", () => {
+        const blob = new Blob(chunks);
+      });
+
       const audio = document.createElement("div");
       audio.classList.add("audio");
       audio.innerHTML = `<audio>${this.audio}</audio>`;
       messageDomElement.appendChild(audio);
     }
-    if (this.video) {
-      const video = document.createElement("div");
-      video.classList.add("audio");
-      video.innerHTML = `<audio>${this.video}</audio>`;
-      messageDomElement.appendChild(video);
-    }
+    // if (this.video) {
+    //   const video = document.createElement("video");
+    //   const audioRecorder = new MediaRecorder(this.audio);
+    //   video.classList.add("audio");
+    //   video.srcObject = this.video;
+    //   messageDomElement.appendChild(video);
+    //   video.addEventListener("canplay", () => {});
+    // }
   }
 }

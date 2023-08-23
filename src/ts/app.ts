@@ -1,17 +1,20 @@
 import { Message } from "./Message";
+import { MediaTools } from "./MediaTools";
 
 type extractedData = {
   geo: { latitude: number; longitude: number } | string | undefined;
   text: string;
   date: number | undefined;
   video: Blob | undefined;
-  audio: Blob | undefined;
+  audio: MediaStream | undefined;
 };
 
 function app() {
   const vault: Message[] = [];
 
   const input = document.querySelector(".input") as HTMLInputElement;
+  const audio = document.querySelector(".audio") as HTMLAudioElement;
+  const video = document.querySelector(".video") as HTMLVideoElement;
   const chat = document.querySelector(".content-container") as HTMLDivElement;
 
   const submitMessageHandler = async (event: KeyboardEventInit) => {
@@ -23,7 +26,19 @@ function app() {
     }
   };
 
+  const videoHandler = async (event: MouseEvent) => {
+    event.preventDefault();
+    const audio = await MediaTools.getAudio();
+    const message = new Message(input.value, undefined, undefined, audio);
+    vault.push(message);
+    message.postMessage(chat);
+  };
+
+  const audioHandler = () => {};
+
   input?.addEventListener("keyup", submitMessageHandler);
+  video?.addEventListener("click", videoHandler);
+  audio?.addEventListener("click", audioHandler);
 
   // window.addEventListener("beforeunload", function () {
   //   localStorage.clear();
