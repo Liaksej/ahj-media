@@ -3,7 +3,7 @@ export class Message {
   constructor(
     public text: string,
     public date?: number,
-    public video?: Blob,
+    public video?: Promise<MediaStream>,
     public audio?: MediaStream,
     public geo?:
       | string
@@ -32,7 +32,7 @@ export class Message {
     return formatter.format(date);
   }
 
-  postMessage(chat: HTMLDivElement) {
+  async postMessage(chat: HTMLDivElement) {
     const messageDomElement = document.createElement("div");
     messageDomElement.classList.add("message");
     messageDomElement.innerHTML = `
@@ -71,34 +71,41 @@ export class Message {
           }
         });
     }
-    if (this.audio) {
-      const audioRecorder = new MediaRecorder(this.audio);
-      const chunks: Blob[] = [];
-
-      audioRecorder.addEventListener("start", () => {
-        console.log("start");
-      });
-
-      audioRecorder.addEventListener("dataavailable", (event) => {
-        chunks.push(event.data);
-      });
-
-      audioRecorder.addEventListener("stop", () => {
-        const blob = new Blob(chunks);
-      });
-
-      const audio = document.createElement("div");
-      audio.classList.add("audio");
-      audio.innerHTML = `<audio>${this.audio}</audio>`;
-      messageDomElement.appendChild(audio);
-    }
-    // if (this.video) {
-    //   const video = document.createElement("video");
+    // if (this.audio) {
     //   const audioRecorder = new MediaRecorder(this.audio);
-    //   video.classList.add("audio");
-    //   video.srcObject = this.video;
-    //   messageDomElement.appendChild(video);
-    //   video.addEventListener("canplay", () => {});
+    //   const chunks: Blob[] = [];
+    //
+    //   audioRecorder.addEventListener("start", () => {
+    //     console.log("start");
+    //   });
+    //
+    //   audioRecorder.addEventListener("dataavailable", (event) => {
+    //     chunks.push(event.data);
+    //   });
+    //
+    //   audioRecorder.addEventListener("stop", () => {
+    //     const blob = new Blob(chunks);
+    //   });
+    //
+    //   const audio = document.createElement("div");
+    //   audio.classList.add("audio");
+    //   audio.innerHTML = `<audio>${this.audio}</audio>`;
+    //   messageDomElement.appendChild(audio);
     // }
+    if (this.video instanceof Promise) {
+      const videoElement = document.createElement("video");
+      // const videoRecord = new MediaRecorder(this.video);
+      videoElement.classList.add("video_container");
+      messageDomElement.appendChild(videoElement);
+      videoElement.srcObject = await this.video;
+      videoElement.addEventListener("canplay", () => {
+        videoElement.play();
+      });
+      const videoButton = document.querySelector(".video");
+      if (videoButton) {
+        videoButton.innerHTML = `<i class="fa-solid fa-stop"></i>`;
+      }
+      await MediaTools.mediaRecorder(await this.video);
+    }
   }
 }

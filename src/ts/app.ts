@@ -5,7 +5,7 @@ type extractedData = {
   geo: { latitude: number; longitude: number } | string | undefined;
   text: string;
   date: number | undefined;
-  video: Blob | undefined;
+  video: Promise<MediaStream> | undefined;
   audio: MediaStream | undefined;
 };
 
@@ -17,7 +17,7 @@ function app() {
   const video = document.querySelector(".video") as HTMLVideoElement;
   const chat = document.querySelector(".content-container") as HTMLDivElement;
 
-  const submitMessageHandler = async (event: KeyboardEventInit) => {
+  const submitMessageHandler = (event: KeyboardEventInit) => {
     if (event.key === "Enter") {
       const message = new Message(input.value);
       input.value = "";
@@ -26,12 +26,16 @@ function app() {
     }
   };
 
-  const videoHandler = async (event: MouseEvent) => {
+  const videoHandler = async (event: Event) => {
     event.preventDefault();
-    const audio = await MediaTools.getAudio();
-    const message = new Message(input.value, undefined, undefined, audio);
-    vault.push(message);
-    message.postMessage(chat);
+    if (event.target instanceof HTMLElement) {
+      if (event.target.classList.contains("fa-video")) {
+        const video = MediaTools.getVideo();
+        const message = new Message(input.value, undefined, video);
+        vault.push(message);
+        message.postMessage(chat);
+      }
+    }
   };
 
   const audioHandler = () => {};
@@ -40,25 +44,25 @@ function app() {
   video?.addEventListener("click", videoHandler);
   audio?.addEventListener("click", audioHandler);
 
-  // window.addEventListener("beforeunload", function () {
-  //   localStorage.clear();
-  // });
-
-  window.addEventListener("beforeunload", () => {
-    const dataListToStore: extractedData[] = [];
-
-    vault.forEach((message) => {
-      const extractedData = {
-        text: message.text,
-        geo: message.geo,
-        date: message.date,
-        video: message.video,
-        audio: message.audio,
-      };
-      dataListToStore.push(extractedData);
-    });
-    localStorage.setItem("dataListToStore", JSON.stringify(dataListToStore));
+  window.addEventListener("beforeunload", function () {
+    localStorage.clear();
   });
+
+  // window.addEventListener("beforeunload", () => {
+  //   const dataListToStore: extractedData[] = [];
+  //
+  //   vault.forEach((message) => {
+  //     const extractedData = {
+  //       text: message.text,
+  //       geo: message.geo,
+  //       date: message.date,
+  //       video: message.video,
+  //       audio: message.audio,
+  //     };
+  //     dataListToStore.push(extractedData);
+  //   });
+  //   localStorage.setItem("dataListToStore", JSON.stringify(dataListToStore));
+  // });
 
   document.addEventListener("DOMContentLoaded", () => {
     const json = localStorage.getItem("dataListToStore") || "[]";
