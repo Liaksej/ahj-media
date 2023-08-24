@@ -1,28 +1,27 @@
 import { Message } from "./Message";
-import { MediaTools } from "./MediaTools";
 
-type extractedData = {
-  geo: { latitude: number; longitude: number } | string | undefined;
-  text: string;
-  date: number | undefined;
-  video: Promise<MediaStream> | undefined;
-  audio: MediaStream | undefined;
-};
+// type extractedData = {
+//   geo: { latitude: number; longitude: number } | string | undefined;
+//   text: string;
+//   date: number | undefined;
+//   video: Promise<MediaStream> | undefined;
+//   audio: MediaStream | undefined;
+// };
+export const vault: Message[] = [];
+export const activeStream: MediaStream[] = [];
 
 function app() {
-  const vault: Message[] = [];
-
   const input = document.querySelector(".input") as HTMLInputElement;
   const audio = document.querySelector(".audio") as HTMLAudioElement;
   const video = document.querySelector(".video") as HTMLVideoElement;
   const chat = document.querySelector(".content-container") as HTMLDivElement;
 
-  const submitMessageHandler = (event: KeyboardEventInit) => {
+  const submitMessageHandler = async (event: KeyboardEventInit) => {
     if (event.key === "Enter") {
       const message = new Message(input.value);
       input.value = "";
       vault.push(message);
-      message.postMessage(chat);
+      await message.postMessage(chat);
     }
   };
 
@@ -30,15 +29,23 @@ function app() {
     event.preventDefault();
     if (event.target instanceof HTMLElement) {
       if (event.target.classList.contains("fa-video")) {
-        const video = MediaTools.getVideo();
-        const message = new Message(input.value, undefined, video);
+        const message = new Message(input.value, true);
         vault.push(message);
-        message.postMessage(chat);
+        await message.postMessage(chat);
       }
     }
   };
 
-  const audioHandler = () => {};
+  const audioHandler = async (event: Event) => {
+    event.preventDefault();
+    if (event.target instanceof HTMLElement) {
+      if (event.target.classList.contains("fa-microphone")) {
+        const message = new Message(input.value, false, true);
+        vault.push(message);
+        await message.postMessage(chat);
+      }
+    }
+  };
 
   input?.addEventListener("keyup", submitMessageHandler);
   video?.addEventListener("click", videoHandler);
@@ -64,29 +71,29 @@ function app() {
   //   localStorage.setItem("dataListToStore", JSON.stringify(dataListToStore));
   // });
 
-  document.addEventListener("DOMContentLoaded", () => {
-    const json = localStorage.getItem("dataListToStore") || "[]";
-
-    try {
-      const dataListFromStore = JSON.parse(json);
-
-      if (dataListFromStore[0]) {
-        dataListFromStore.forEach((extractedData: extractedData) => {
-          const message = new Message(
-            extractedData.text,
-            extractedData.date,
-            extractedData.video,
-            extractedData.audio,
-            extractedData.geo,
-          );
-          vault.push(message);
-          message.postMessage(chat);
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  });
+  // document.addEventListener("DOMContentLoaded", () => {
+  //   const json = localStorage.getItem("dataListToStore") || "[]";
+  //
+  //   try {
+  //     const dataListFromStore = JSON.parse(json);
+  //
+  //     if (dataListFromStore[0]) {
+  //       dataListFromStore.forEach((extractedData: extractedData) => {
+  //         const message = new Message(
+  //           extractedData.text,
+  //           extractedData.date,
+  //           extractedData.video,
+  //           extractedData.audio,
+  //           extractedData.geo,
+  //         );
+  //         vault.push(message);
+  //         message.postMessage(chat);
+  //       });
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // });
 }
 
 app();
