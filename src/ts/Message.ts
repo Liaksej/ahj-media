@@ -38,8 +38,8 @@ export class Message {
 
     messageDomElement.classList.add(
       "message",
-      "bg-indigo-200",
-      "text-indigo-900",
+      "bg-indigo-50",
+      "text-indigo-950",
       "rounded-lg",
       "p-4",
       "w-[98%]",
