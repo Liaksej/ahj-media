@@ -15,11 +15,15 @@ function app() {
   const audio = document.querySelector(".audio") as HTMLAudioElement;
   const video = document.querySelector(".video") as HTMLVideoElement;
   const chat = document.querySelector(".content-container") as HTMLDivElement;
+  const inputContainer = document.querySelector(
+    ".input-container",
+  ) as HTMLDivElement;
 
   const submitMessageHandler = async (event: KeyboardEventInit) => {
     if (event.key === "Enter") {
       const message = new Message(input.value);
       input.value = "";
+      input.style.height = "auto";
       vault.push(message);
       await message.postMessage(chat);
     }
@@ -55,6 +59,23 @@ function app() {
     localStorage.clear();
   });
 
+  input.addEventListener("focus", () => {
+    inputContainer.classList.add(
+      "outline",
+      "outline-offset-2",
+      "outline-2",
+      "outline-indigo-500",
+    );
+  });
+  input.addEventListener("blur", function () {
+    inputContainer.classList.remove(
+      "outline",
+      "outline-offset-2",
+      "outline-2",
+      "outline-",
+      "outline-indigo-500",
+    );
+  });
   // window.addEventListener("beforeunload", () => {
   //   const dataListToStore: extractedData[] = [];
   //

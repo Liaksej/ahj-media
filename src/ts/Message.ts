@@ -39,6 +39,7 @@ export class Message {
     messageDomElement.classList.add(
       "message",
       "bg-indigo-50",
+      "h-fit",
       "text-indigo-950",
       "rounded-lg",
       "p-4",
@@ -47,9 +48,11 @@ export class Message {
       "mx-auto",
     );
     messageDomElement.innerHTML = `
-      <div class="text-of-message">${this.text}</div>
-      <div class="geo-of-message">loading...</div>
-      <div class="date">${this.dateConverter(this.date!)}</div>`;
+      <div class="text-of-message break-words mb-4">${this.text}</div>
+      <div class="geo-of-message text-gray-500 text-xs">loading...</div>
+      <div class="date text-yellow-800 text-xs">${this.dateConverter(
+        this.date!,
+      )}</div>`;
     chat.appendChild(messageDomElement);
 
     const geoElement: HTMLDivElement | null =
