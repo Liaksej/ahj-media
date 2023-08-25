@@ -3,8 +3,21 @@ import { Tooltip } from "./tooltipFabric";
 export class Popup {
   public actualMessages: { id: number; name: HTMLFormElement["name"] }[] = [];
   private tooltip: Tooltip = new Tooltip();
+  private ckeckValidity: boolean = false;
   popupOnSubmit() {
-    this.popupCreator();
+    const input: HTMLFormElement | null =
+      document.querySelector("input[name='item']");
+    if (input) {
+      const lastMessageElement = Array.from(
+        document.querySelectorAll(".geo-of-message"),
+      ).at(-1);
+      if (lastMessageElement) {
+        const regex = /\[?(\d+\.\d+),\s*−?(\d+\.\d+)\]?/g;
+        lastMessageElement.textContent = input.value.replace(regex, "[$1, $2]");
+      }
+      input.value = "";
+      this.popupCreator();
+    }
   }
 
   popupCreator() {
@@ -156,7 +169,7 @@ export class Popup {
       item: {
         valueMissing: "Нам потребуются координаты...",
         patternMismatch:
-          "Координаты должны быть в формате '51.50851, −0.12572'",
+          "Координаты должны быть в формате '[51.50851, −0.12572]'",
       },
     };
     const showTooltip = (message: string, el: HTMLFormElement) => {
@@ -170,7 +183,7 @@ export class Popup {
       const errorKey: string | undefined = Object.keys(
         ValidityState.prototype,
       ).find((key) => {
-        if (!el) return;
+        if (!el || !(el instanceof HTMLInputElement)) return;
         if (key === "valid") return;
         if (key in el.validity) {
           return (el.validity as never)[
@@ -179,9 +192,19 @@ export class Popup {
         }
       });
 
-      if (!errorKey) return;
+      if (!errorKey && el?.tagName === "INPUT") {
+        const err = this.validator(el!.value);
+        if (err) {
+          return errors[el!.name as never][err];
+        }
+        return null;
+      }
 
-      if (el!.name in errors && errorKey in errors[el!.name as never]) {
+      if (
+        el!.name in errors &&
+        errorKey &&
+        errorKey in errors[el!.name as never]
+      ) {
         return errors[el!.name as never][errorKey];
       }
     };
@@ -227,7 +250,7 @@ export class Popup {
         return false;
       });
 
-      if (form?.checkValidity()) {
+      if (form?.checkValidity() && this.ckeckValidity) {
         console.log("valid");
         console.log("submit");
 
@@ -237,6 +260,7 @@ export class Popup {
         Array.from(form.elements).forEach((el) =>
           el.removeEventListener("focus", elementBlurCallback),
         );
+        this.ckeckValidity = false;
       }
     };
 
@@ -274,5 +298,13 @@ export class Popup {
     Array.from(form!.elements).forEach(
       (element) => element?.addEventListener("focus", elementBlurCallback),
     );
+  }
+
+  private validator(text: string) {
+    if (/(?:(?:\[)?(\d+\.\d+),\s*−?(\d+\.\d+)(?:\])?)/g.test(text)) {
+      this.ckeckValidity = true;
+      return;
+    }
+    return "patternMismatch";
   }
 }
