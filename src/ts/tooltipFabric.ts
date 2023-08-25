@@ -4,7 +4,23 @@ export class Tooltip {
   showTooltip(message: string, element: HTMLElement) {
     const tooltipElement = document.createElement("DIV");
 
-    tooltipElement.classList.add("form-error");
+    tooltipElement.classList.add(
+      "form-error",
+      "absolute",
+      "py-1",
+      "px-4",
+      "rounded",
+      "bg-orange-600",
+      "text-white",
+      "text-sm",
+      "shadow-md",
+      "z-50",
+      "transform",
+      "transition-transform",
+      "ease-in-out",
+      "duration-500",
+      "animate-bounceX",
+    );
     tooltipElement.textContent = message;
 
     const id = performance.now();
