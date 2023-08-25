@@ -48,7 +48,9 @@ export class Message {
       "mx-auto",
     );
     messageDomElement.innerHTML = `
-      <div class="text-of-message break-words mb-4">${this.text}</div>
+      <div class="text-of-message break-words mb-4"><div>${
+        this.text
+      }</div></div>
       <div class="geo-of-message text-gray-500 text-xs">loading...</div>
       <div class="date text-yellow-800 text-xs">${this.dateConverter(
         this.date!,
@@ -85,11 +87,17 @@ export class Message {
           }
         });
     }
+
+    const forInsert = messageDomElement.querySelector(".text-of-message");
+
     if (this.audio) {
       const audioElement = document.createElement("audio");
       audioElement.classList.add("audio_container");
       audioElement.setAttribute("controls", "");
-      messageDomElement.appendChild(audioElement);
+      forInsert?.insertBefore(
+        audioElement,
+        forInsert.firstElementChild!.nextElementSibling,
+      );
       const audioButton = document.querySelector(".audio");
       if (audioButton && videoButton) {
         videoButton.innerHTML = `<i class="fa-solid fa-stop"></i>`;
@@ -100,7 +108,10 @@ export class Message {
     if (this.video) {
       const videoElement = document.createElement("video");
       videoElement.classList.add("video_container");
-      messageDomElement.appendChild(videoElement);
+      forInsert?.insertBefore(
+        videoElement,
+        forInsert.firstElementChild!.nextElementSibling,
+      );
       const stream = await MediaTools.getVideo();
       activeStream.push(stream);
       videoElement.srcObject = stream;

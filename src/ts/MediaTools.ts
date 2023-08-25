@@ -1,5 +1,4 @@
-import { vault } from "./app";
-import { activeStream } from "./app";
+import { activeStream, vault } from "./app";
 
 export class MediaTools {
   static getCurrentGeoposition(): Promise<
@@ -96,7 +95,6 @@ export class MediaTools {
     const audioButton = document.querySelector(".audio");
 
     recorder.addEventListener("start", () => {
-      console.log("start");
       let counter: number = 0;
       timer = setInterval(() => {
         counter++;
@@ -123,7 +121,6 @@ export class MediaTools {
 
     recorder.addEventListener("stop", async () => {
       const blob = new Blob(chunks);
-      console.log("stop");
       if (mediaElement instanceof HTMLMediaElement) {
         if (witchButton === "stop") {
           mediaElement.src = URL.createObjectURL(blob);
@@ -131,14 +128,13 @@ export class MediaTools {
           mediaElement.setAttribute("controls", "");
           if (typeOfStream === "video") {
             vault.at(-1)!.video = blob;
-            console.log(vault.at(-1)!.video);
           } else {
             vault.at(-1)!.audio = blob;
-            console.log(vault.at(-1)!.audio);
           }
         }
         if (witchButton === "cancel") {
-          mediaElement.remove();
+          mediaElement.closest(".message")?.remove();
+          vault.splice(-1, 1);
         }
 
         mediaElement.srcObject = null;
