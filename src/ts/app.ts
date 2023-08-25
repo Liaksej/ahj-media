@@ -32,7 +32,10 @@ function app() {
   const videoHandler = async (event: Event) => {
     event.preventDefault();
     if (event.target instanceof HTMLElement) {
-      if (event.target.classList.contains("fa-video")) {
+      if (
+        event.target.classList.contains("fa-video") ||
+        event.target.firstElementChild?.classList.contains("fa-video")
+      ) {
         const message = new Message(input.value, true);
         vault.push(message);
         await message.postMessage(chat);
@@ -43,7 +46,10 @@ function app() {
   const audioHandler = async (event: Event) => {
     event.preventDefault();
     if (event.target instanceof HTMLElement) {
-      if (event.target.classList.contains("fa-microphone")) {
+      if (
+        event.target.classList.contains("fa-microphone") ||
+        event.target.firstElementChild?.classList.contains("fa-microphone")
+      ) {
         const message = new Message(input.value, false, true);
         vault.push(message);
         await message.postMessage(chat);
