@@ -1,5 +1,6 @@
 import { MediaTools } from "./MediaTools";
 import { activeStream } from "./app";
+import { Popup } from "./Popup";
 export class Message {
   constructor(
     public text: string,
@@ -82,6 +83,7 @@ export class Message {
         .catch((error) => {
           console.error("Could not fetch geo data:", error?.code);
           this.geo = error.message;
+          new Popup().popupCreator();
           if (geoElement) {
             geoElement.textContent = `${error?.message}`;
           }
