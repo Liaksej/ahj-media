@@ -72,7 +72,6 @@ function app() {
       "outline",
       "outline-offset-1",
       "outline-2",
-      "outline-",
       "outline-indigo-500/40",
     );
   });

@@ -36,10 +36,10 @@ export class Popup {
         </div>
         <p class="theme mb-4 text-gray-700 text-sm">К сожалению, нам не удалось определить ваше местоположение, пожалуйста, дайте разрешение на использование геолокации, либо введите координаты вручную.</p>
         <h2 class="mb-2 text-sm">Широта и долгота через запятую</h2>
-        <input type="text" name="item" class="mb-4 p-2 border-2 border-gray-300 rounded w-full" required>
+        <input type="text" name="item" class="focus:outline-none focus:ring-2 focus:ring-indigo-500/40 mb-4 p-2 border-2 border-indigo-200 rounded w-full" required>
         <div class="form_buttons flex justify-end">
-          <button class="cancel-bnt mr-2 px-4 py-2 border-2 border-gray-300 rounded" type="button">Отмена</button>
-          <button class="submit-btn px-4 py-2 bg-blue-500 text-white rounded" type="submit">Ok</button>
+          <button class="cancel-bnt mr-2 px-4 py-2 border-2 border-indigo-200 rounded" type="button">Отмена</button>
+          <button class="submit-btn px-4 py-2 bg-indigo-500 text-white rounded" type="submit">Ok</button>
         </div>
       </form>`;
       document.body.appendChild(popupWindow);
@@ -159,7 +159,6 @@ export class Popup {
           "Координаты должны быть в формате '51.50851, −0.12572'",
       },
     };
-    // TODO: Поставить вместо any правильный тип.
     const showTooltip = (message: string, el: HTMLFormElement) => {
       this.actualMessages.push({
         name: el.name,
