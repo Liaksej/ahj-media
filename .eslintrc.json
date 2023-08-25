@@ -10,7 +10,7 @@
     "sourceType": "module"
   },
   "rules": {
-    "no-unused-vars": "warn"
+    "prettier/prettier": "error"
   },
   "overrides": [],
   "parser": "@typescript-eslint/parser"

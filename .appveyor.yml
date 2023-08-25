@@ -1,5 +1,9 @@
 image: Ubuntu1804  # образ для сборки
 
+environment:
+  GITHUB_TOKEN:
+    secure: rKdsw1KgWV2Z2QuzJ+kmvGT7+WFjazcjsGOZ9hfyf1XRqxp+19cJXCYItRfju89y
+
 stack: node 16  # окружение
 
 branches:
