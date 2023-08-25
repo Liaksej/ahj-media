@@ -29,10 +29,10 @@ export class MediaTools {
           });
           resolve(video);
         } catch (error) {
-          reject(new Error("Meida in not supported by this browser."));
+          reject(new Error("Video is restricted by User."));
         }
       } else {
-        reject(new Error("Meida in not supported by this browser."));
+        reject(new Error("Video in not supported by this browser."));
       }
     });
   }
@@ -64,7 +64,7 @@ export class MediaTools {
           });
           resolve(video);
         } catch (error) {
-          reject(new Error("Meida in not supported by this browser."));
+          reject(new Error("Video or audio is restricted by User."));
         }
       } else {
         reject(new Error("Meida in not supported by this browser."));

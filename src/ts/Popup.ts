@@ -4,7 +4,7 @@ export class Popup {
   public actualMessages: { id: number; name: HTMLFormElement["name"] }[] = [];
   private tooltip: Tooltip = new Tooltip();
   private ckeckValidity: boolean = false;
-  popupOnSubmit() {
+  private popupOnSubmit() {
     const input: HTMLFormElement | null =
       document.querySelector("input[name='item']");
     if (input) {
@@ -72,95 +72,62 @@ export class Popup {
     }
   }
 
-  // deletePopupOnSubmit(itemForDelete) {
-  //   const deletePopupElement = document.querySelector(".form-delete");
-  //   const cancelDeleteButton = deletePopupElement.querySelector(".cancel-bnt");
-  //
-  //   const popupWindowHandler = (event) => {
-  //     event.preventDefault();
-  //
-  //     if (itemForDelete) {
-  //       const ticketDataForDelete = {
-  //         id: itemForDelete.dataset.id,
-  //       };
-  //
-  //       const urlForDeleteTicketFull = new URL(this.url);
-  //       const params = {
-  //         method: "deleteTicketById",
-  //         id: itemForDelete.dataset.id,
-  //       };
-  //       Object.keys(params).forEach((key) =>
-  //         urlForDeleteTicketFull.searchParams.append(key, params[key]),
-  //       );
-  //
-  //       fetch(urlForDeleteTicketFull, {
-  //         method: "DELETE",
-  //         mode: "cors",
-  //         headers: { "Content-Type": "application/json" },
-  //         body: JSON.stringify(ticketDataForDelete),
-  //       })
-  //         .then((response) => {
-  //           if (!response.ok) {
-  //             throw new Error(`HTTP error! status: ${response.status}`);
-  //           }
-  //           return response.json();
-  //         })
-  //         .then((ticketsList) => {
-  //           if (Array.isArray(ticketsList)) {
-  //             this._createTicketsList(ticketsList);
-  //           }
-  //         })
-  //         .catch((error) => {
-  //           console.log("Error:", error);
-  //         });
-  //     }
-  //
-  //     this.deletePopup();
-  //
-  //     deletePopupElement.removeEventListener("submit", popupWindowHandler);
-  //     cancelDeleteButton.removeEventListener("click", deletePopupCancelHandler);
-  //   };
-  //
-  //   const deletePopupCancelHandler = (event) => {
-  //     event.preventDefault();
-  //     if (event.target === deletePopupElement.querySelector(".cancel-bnt")) {
-  //       this.deletePopup();
-  //       cancelDeleteButton.removeEventListener(
-  //         "click",
-  //         deletePopupCancelHandler,
-  //       );
-  //       deletePopupElement.removeEventListener("submit", popupWindowHandler);
-  //     }
-  //   };
-  //
-  //   deletePopupElement.addEventListener("submit", popupWindowHandler);
-  //   cancelDeleteButton.addEventListener("click", deletePopupCancelHandler);
-  // }
+  private warningPopupOnCancel(popupDelete: HTMLElement) {
+    const cancelBnt = popupDelete.querySelector(".cancel-bnt");
 
-  // deletePopup(itemForDelete) {
-  //   const popupDelete = document.querySelector(".popup_delete");
-  //   if (!popupDelete) {
-  //     const popupWindow = document.createElement("div");
-  //     popupWindow.classList.add("popup_delete", "shown");
-  //     popupWindow.innerHTML = `
-  //     <form class="form-delete">
-  //       <div class="form-header"><h2>Удалить тикет</h2></div>
-  //       <h2>Вы уверены, что хотите удалить этот тикет? Это действие необходимо.</h2>
-  //       <div class="form_buttons">
-  //         <button class="cancel-bnt" type="button">Отмена</button>
-  //         <button class="submit-btn" type="submit">Ok</button>
-  //       </div>
-  //     </form>`;
-  //     document.body.appendChild(popupWindow);
-  //   } else {
-  //     popupDelete.classList.toggle("shown");
-  //   }
-  //   if (itemForDelete) {
-  //     this.deletePopupOnSubmit(itemForDelete);
-  //   }
-  // }
+    const warningPopupCancelHandler = (event: Event) => {
+      event.preventDefault();
+      this.warningPopup();
+      cancelBnt?.removeEventListener("click", warningPopupCancelHandler);
+    };
 
-  tooltipLogic() {
+    cancelBnt?.addEventListener("click", warningPopupCancelHandler);
+  }
+
+  warningPopup(errorMsg?: string) {
+    const popupWarning: HTMLElement | null =
+      document.querySelector(".popup_warning");
+    if (!popupWarning) {
+      const popupWindow = document.createElement("div");
+      popupWindow.classList.add(
+        "popup_warning",
+        "top-[50%]",
+        "left-[50%]",
+        "transform-gpu",
+        "-translate-x-1/2",
+        "-translate-y-1/2",
+        "w-[400px]",
+        "absolute",
+        "border-solid",
+        "border-0",
+        "bg-white",
+        "rounded",
+        "shadow-lg",
+        "p-6",
+      );
+      popupWindow.innerHTML = `
+      <form class="form-delete">
+        <div class="form-header mb-4"><h2 class="text-lg font-semibold">Что-то пошло не так</h2></div>
+        <p class="theme mb-4 text-gray-700 text-sm">Недоступно API для кмеры и/или микрофона в вашем браузере или они отсутствуют. Либо вы не запретили браузеру использовать ваш микрофон и/или камеру для этого сайта. Нужно с этим что-то сделать. Конкретная причина:</p>
+        <p class="theme mb-4 text-gray-700 text-sm">
+        <ul>
+          <li class="theme mb-4 text-gray-700 text-sm font-bold">${errorMsg}</li>
+          </ul>
+        </p>
+        <div class="form_buttons flex justify-center">
+          <button class="cancel-bnt px-4 py-2 bg-indigo-500 text-white rounded" type="button">Закрыть</button>
+        </div>
+      </form>`;
+      document.body.appendChild(popupWindow);
+    } else {
+      popupWarning.classList.toggle("hidden");
+    }
+    const worningElement =
+      popupWarning ?? document.querySelector(".popup_warning");
+    if (worningElement) this.warningPopupOnCancel(worningElement);
+  }
+
+  private tooltipLogic() {
     const form: HTMLFormElement | null = document.querySelector(".form");
     const cancelButton: HTMLElement | null | undefined =
       form?.querySelector(".cancel-bnt");
@@ -300,7 +267,7 @@ export class Popup {
     );
   }
 
-  private validator(text: string) {
+  public validator(text: string) {
     if (/(?:(?:\[)?(\d+\.\d+),\s*−?(\d+\.\d+)(?:\])?)/g.test(text)) {
       this.ckeckValidity = true;
       return;

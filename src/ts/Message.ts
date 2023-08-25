@@ -114,7 +114,14 @@ export class Message {
         videoElement,
         forInsert.firstElementChild!.nextElementSibling,
       );
-      const stream = await MediaTools.getVideo();
+      let stream;
+      try {
+        stream = await MediaTools.getVideo();
+      } catch (e) {
+        new Popup().warningPopup(`${e}`);
+        return;
+      }
+
       activeStream.push(stream);
       videoElement.srcObject = stream;
       videoElement.addEventListener("canplay", () => {
