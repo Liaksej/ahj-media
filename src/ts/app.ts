@@ -62,18 +62,18 @@ function app() {
   input.addEventListener("focus", () => {
     inputContainer.classList.add(
       "outline",
-      "outline-offset-2",
+      "outline-offset-1",
       "outline-2",
-      "outline-indigo-500",
+      "outline-indigo-500/40",
     );
   });
   input.addEventListener("blur", function () {
     inputContainer.classList.remove(
       "outline",
-      "outline-offset-2",
+      "outline-offset-1",
       "outline-2",
       "outline-",
-      "outline-indigo-500",
+      "outline-indigo-500/40",
     );
   });
   // window.addEventListener("beforeunload", () => {
