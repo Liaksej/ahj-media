@@ -7,13 +7,15 @@
   <title>Document</title>
   <script src="https://kit.fontawesome.com/b1929989ea.js" crossorigin="anonymous"></script>
 </head>
-<body>
-<div class="main-container flex flex-col w-auto h-96 border border-cyan-950">
-  <div class="content-container flex-auto w-auto"></div>
-  <div class="input-container flex">
-    <input type="text" class="input border rounded h-9 w-full" />
-    <button class="audio border rounded-full pl-1.5 pr-1.5 absolute right-1.5"><i class="fa-solid fa-microphone"></i></button>
-    <button class="video border rounded-full pl-1 pr-1 absolute right-9"><i class="fa-solid fa-video"></i></button>
+<body class="h-screen">
+<div class="main-container flex flex-col m-auto w-10/12 h-[95%] bg-white">
+  <div class="content-container flex-auto w-auto h-auto scroll-auto overflow-auto px-4 py-4"></div>
+  <div class="input-container flex items-center border border-indigo-100">
+    <input type="text" class="input px-4 py-2 w-full outline-none" placeholder="Type your message..." />
+    <div class="flex space-x-4">
+      <button class="video border rounded-full h-10 w-10 flex items-center justify-center text-indigo-500"><i class="fa-solid fa-video"></i></button>
+      <button class="audio border rounded-full h-10 w-10 flex items-center justify-center text-indigo-500"><i class="fa-solid fa-microphone"></i></button>
+    </div>
   </div>
 </div>
 </body>

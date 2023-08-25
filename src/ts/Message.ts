@@ -36,7 +36,16 @@ export class Message {
     const audioButton = document.querySelector(".audio");
     const videoButton = document.querySelector(".video");
 
-    messageDomElement.classList.add("message");
+    messageDomElement.classList.add(
+      "message",
+      "bg-indigo-200",
+      "text-indigo-900",
+      "rounded-lg",
+      "p-4",
+      "w-[98%]",
+      "mb-4",
+      "mx-auto",
+    );
     messageDomElement.innerHTML = `
       <div class="text-of-message">${this.text}</div>
       <div class="geo-of-message">loading...</div>
