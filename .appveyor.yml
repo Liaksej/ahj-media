@@ -20,7 +20,9 @@ install:
 build: off  # отключаем встроенную в appveyor систему сборки
 
 build_script:
-  - pnpm lint + pnpm test + pnpm build   # команда теста и сборки
+  - pnpm lint
+  - pnpm test
+  - pnpm build
 
 deploy_script:  # скрипт развёртывания
   - git config --global credential.helper store
