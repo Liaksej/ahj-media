@@ -1,4 +1,5 @@
 import { activeStream, vault } from "./app";
+import { Popup } from "./Popup";
 
 export class MediaTools {
   static getCurrentGeoposition(): Promise<
@@ -25,7 +26,7 @@ export class MediaTools {
       if (navigator.mediaDevices) {
         try {
           const video = navigator.mediaDevices.getUserMedia({
-            video: { width: 300 },
+            video: { width: 500 },
           });
           resolve(video);
         } catch (error) {
@@ -60,7 +61,7 @@ export class MediaTools {
         try {
           const video = navigator.mediaDevices.getUserMedia({
             audio: true,
-            video: { width: 300 },
+            video: { width: 500 },
           });
           resolve(video);
         } catch (error) {
@@ -73,19 +74,6 @@ export class MediaTools {
   }
 
   static async mediaRecorder(typeOfStream: string) {
-    const stream =
-      typeOfStream === "video"
-        ? await MediaTools.getVideoAudio()
-        : await MediaTools.getAudio();
-
-    activeStream.push(stream);
-
-    const recorder = new MediaRecorder(stream);
-    const chunks: Blob[] = [];
-
-    let timer: number;
-    let witchButton: string;
-
     const mediaElement: Element | undefined =
       typeOfStream === "video"
         ? Array.from(document.querySelectorAll(".video_container")).at(-1)
@@ -93,6 +81,26 @@ export class MediaTools {
 
     const videoButton = document.querySelector(".video");
     const audioButton = document.querySelector(".audio");
+
+    let stream: MediaStream | Blob | undefined;
+
+    try {
+      stream =
+        typeOfStream === "video"
+          ? await MediaTools.getVideoAudio()
+          : await MediaTools.getAudio();
+    } catch (e) {
+      new Popup().warningPopup(`${e}`);
+      return;
+    }
+
+    activeStream.push(stream);
+    const recorder = new MediaRecorder(stream);
+
+    const chunks: Blob[] = [];
+    let timer: number;
+
+    let witchButton: string;
 
     recorder.addEventListener("start", () => {
       let counter: number = 0;
@@ -124,7 +132,8 @@ export class MediaTools {
       if (mediaElement instanceof HTMLMediaElement) {
         if (witchButton === "stop") {
           mediaElement.src = URL.createObjectURL(blob);
-          mediaElement.setAttribute("width", "300");
+          mediaElement.classList.add("w-3/5");
+          mediaElement.setAttribute("width", "500");
           mediaElement.setAttribute("controls", "");
           if (typeOfStream === "video") {
             vault.at(-1)!.video = blob;
@@ -149,7 +158,8 @@ export class MediaTools {
     videoButton?.addEventListener("click", async (event) => {
       if (
         event.target instanceof HTMLElement &&
-        event.target.classList.contains("fa-stop")
+        (event.target.firstElementChild?.classList.contains("fa-stop") ||
+          event.target.classList.contains("fa-stop"))
       ) {
         witchButton = "stop";
         recorder.stop();
@@ -159,12 +169,12 @@ export class MediaTools {
           });
         });
 
-        if (event.target.parentElement) {
-          event.target.parentElement.innerHTML = `<i class="fa-solid fa-video"></i>`;
-          document.querySelector(
-            ".audio",
-          )!.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
-        }
+        document.querySelector(
+          ".video",
+        )!.innerHTML = `<i class="fa-solid fa-video"></i>`;
+        document.querySelector(
+          ".audio",
+        )!.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
       }
     });
 
@@ -172,7 +182,8 @@ export class MediaTools {
       event.preventDefault();
       if (
         event.target instanceof HTMLElement &&
-        event.target.classList.contains("fa-xmark")
+        (event.target.firstElementChild?.classList.contains("fa-xmark") ||
+          event.target.classList.contains("fa-xmark"))
       ) {
         witchButton = "cancel";
         recorder.stop();
@@ -183,7 +194,9 @@ export class MediaTools {
         });
 
         if (event.target.parentElement) {
-          event.target.parentElement.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
+          document.querySelector(
+            ".audio",
+          )!.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
           document.querySelector(
             ".video",
           )!.innerHTML = `<i class="fa-solid fa-video"></i>`;

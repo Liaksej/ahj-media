@@ -109,12 +109,12 @@ export class Message {
     }
     if (this.video) {
       const videoElement = document.createElement("video");
-      videoElement.classList.add("video_container");
+      videoElement.classList.add("video_container", "w-3/5");
       forInsert?.insertBefore(
         videoElement,
         forInsert.firstElementChild!.nextElementSibling,
       );
-      let stream;
+      let stream: MediaStream | Blob | undefined;
       try {
         stream = await MediaTools.getVideo();
       } catch (e) {
@@ -122,16 +122,18 @@ export class Message {
         return;
       }
 
-      activeStream.push(stream);
-      videoElement.srcObject = stream;
-      videoElement.addEventListener("canplay", () => {
-        videoElement.play();
-      });
-      if (videoButton && audioButton) {
-        videoButton.innerHTML = `<i class="fa-solid fa-stop"></i>`;
-        audioButton.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+      if (stream) {
+        activeStream.push(stream);
+        videoElement.srcObject = stream;
+        videoElement.addEventListener("canplay", () => {
+          videoElement.play();
+        });
+        if (videoButton && audioButton) {
+          videoButton.innerHTML = `<i class="fa-solid fa-stop"></i>`;
+          audioButton.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
+        }
+        await MediaTools.mediaRecorder("video");
       }
-      await MediaTools.mediaRecorder("video");
     }
   }
 }

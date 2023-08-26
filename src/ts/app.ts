@@ -1,12 +1,5 @@
 import { Message } from "./Message";
 
-// type extractedData = {
-//   geo: { latitude: number; longitude: number } | string | undefined;
-//   text: string;
-//   date: number | undefined;
-//   video: Promise<MediaStream> | undefined;
-//   audio: MediaStream | undefined;
-// };
 export const vault: Message[] = [];
 export const activeStream: MediaStream[] = [];
 
@@ -61,11 +54,7 @@ function app() {
   video?.addEventListener("click", videoHandler);
   audio?.addEventListener("click", audioHandler);
 
-  window.addEventListener("beforeunload", function () {
-    localStorage.clear();
-  });
-
-  input.addEventListener("focus", () => {
+  input?.addEventListener("focus", () => {
     inputContainer.classList.add(
       "outline",
       "outline-offset-1",
@@ -73,7 +62,7 @@ function app() {
       "outline-indigo-500/40",
     );
   });
-  input.addEventListener("blur", function () {
+  input?.addEventListener("blur", function () {
     inputContainer.classList.remove(
       "outline",
       "outline-offset-1",
@@ -81,45 +70,6 @@ function app() {
       "outline-indigo-500/40",
     );
   });
-  // window.addEventListener("beforeunload", () => {
-  //   const dataListToStore: extractedData[] = [];
-  //
-  //   vault.forEach((message) => {
-  //     const extractedData = {
-  //       text: message.text,
-  //       geo: message.geo,
-  //       date: message.date,
-  //       video: message.video,
-  //       audio: message.audio,
-  //     };
-  //     dataListToStore.push(extractedData);
-  //   });
-  //   localStorage.setItem("dataListToStore", JSON.stringify(dataListToStore));
-  // });
-
-  // document.addEventListener("DOMContentLoaded", () => {
-  //   const json = localStorage.getItem("dataListToStore") || "[]";
-  //
-  //   try {
-  //     const dataListFromStore = JSON.parse(json);
-  //
-  //     if (dataListFromStore[0]) {
-  //       dataListFromStore.forEach((extractedData: extractedData) => {
-  //         const message = new Message(
-  //           extractedData.text,
-  //           extractedData.date,
-  //           extractedData.video,
-  //           extractedData.audio,
-  //           extractedData.geo,
-  //         );
-  //         vault.push(message);
-  //         message.postMessage(chat);
-  //       });
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // });
 }
 
 app();

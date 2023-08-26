@@ -1,4 +1,5 @@
 import { Tooltip } from "./tooltipFabric";
+import { vault } from "./app";
 
 export class Popup {
   public actualMessages: { id: number; name: HTMLFormElement["name"] }[] = [];
@@ -21,6 +22,10 @@ export class Popup {
   }
 
   popupCreator() {
+    const warningModal = document.querySelector(".popup_warning");
+
+    if (warningModal && !warningModal?.classList.contains("hidden")) return;
+
     const popupWindow = document.querySelector(".popup_window");
 
     if (!popupWindow) {
@@ -77,6 +82,16 @@ export class Popup {
 
     const warningPopupCancelHandler = (event: Event) => {
       event.preventDefault();
+
+      Array.from(document.querySelectorAll(".message"))?.at(-1)?.remove();
+      vault.splice(-1, 1);
+      document.querySelector(
+        ".audio",
+      )!.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
+      document.querySelector(
+        ".video",
+      )!.innerHTML = `<i class="fa-solid fa-video"></i>`;
+
       this.warningPopup();
       cancelBnt?.removeEventListener("click", warningPopupCancelHandler);
     };
@@ -85,6 +100,14 @@ export class Popup {
   }
 
   warningPopup(errorMsg?: string) {
+    const popupWindow = document.querySelector(".popup_window");
+    if (popupWindow && !popupWindow.classList.contains("hidden")) {
+      (popupWindow.querySelector(".cancel-bnt") as HTMLButtonElement)?.click();
+      if (!popupWindow.classList.contains("hidden")) {
+        popupWindow.classList.add("hidden");
+      }
+    }
+
     const popupWarning: HTMLElement | null =
       document.querySelector(".popup_warning");
     if (!popupWarning) {
@@ -122,9 +145,11 @@ export class Popup {
     } else {
       popupWarning.classList.toggle("hidden");
     }
-    const worningElement =
-      popupWarning ?? document.querySelector(".popup_warning");
-    if (worningElement) this.warningPopupOnCancel(worningElement);
+    if (!popupWarning?.classList.contains("hidden") || !popupWarning) {
+      const worningElement =
+        popupWarning ?? document.querySelector(".popup_warning");
+      if (worningElement) this.warningPopupOnCancel(worningElement);
+    }
   }
 
   private tooltipLogic() {
@@ -178,7 +203,7 @@ export class Popup {
 
     const popupCancelHandler = (event: Event) => {
       event.preventDefault();
-      if (event.target === document.querySelector(".cancel-bnt")) {
+      if (event.target === form?.querySelector(".cancel-bnt")) {
         (
           document.querySelector("input[name='item']") as HTMLInputElement
         ).value = "";
