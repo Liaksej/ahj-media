@@ -5,8 +5,8 @@ export const activeStream: MediaStream[] = [];
 
 function app() {
   const input = document.querySelector(".input") as HTMLInputElement;
-  const audio = document.querySelector(".audio") as HTMLAudioElement;
-  const video = document.querySelector(".video") as HTMLVideoElement;
+  const audio = document.querySelector(".audio") as HTMLButtonElement;
+  const video = document.querySelector(".video") as HTMLButtonElement;
   const chat = document.querySelector(".content-container") as HTMLDivElement;
   const inputContainer = document.querySelector(
     ".input-container",
@@ -43,7 +43,7 @@ function app() {
         event.target.classList.contains("fa-microphone") ||
         event.target.firstElementChild?.classList.contains("fa-microphone")
       ) {
-        const message = new Message(input.value, false, true);
+        const message = new Message(input.value, undefined, true);
         vault.push(message);
         await message.postMessage(chat);
       }

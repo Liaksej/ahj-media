@@ -169,17 +169,12 @@ export class MediaTools {
           });
         });
 
-        document.querySelector(
-          ".video",
-        )!.innerHTML = `<i class="fa-solid fa-video"></i>`;
-        document.querySelector(
-          ".audio",
-        )!.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
+        videoButton!.innerHTML = `<i class="fa-solid fa-video"></i>`;
+        audioButton!.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
       }
     });
 
-    audioButton?.addEventListener("click", (event) => {
-      event.preventDefault();
+    audioButton?.addEventListener("click", async (event) => {
       if (
         event.target instanceof HTMLElement &&
         (event.target.firstElementChild?.classList.contains("fa-xmark") ||
@@ -193,14 +188,8 @@ export class MediaTools {
           });
         });
 
-        if (event.target.parentElement) {
-          document.querySelector(
-            ".audio",
-          )!.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
-          document.querySelector(
-            ".video",
-          )!.innerHTML = `<i class="fa-solid fa-video"></i>`;
-        }
+        videoButton!.innerHTML = `<i class="fa-solid fa-video"></i>`;
+        audioButton!.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
       }
     });
 

@@ -100,12 +100,12 @@ export class Message {
         audioElement,
         forInsert.firstElementChild!.nextElementSibling,
       );
-      const audioButton = document.querySelector(".audio");
+      await MediaTools.mediaRecorder("audio");
+
       if (audioButton && videoButton) {
         videoButton.innerHTML = `<i class="fa-solid fa-stop"></i>`;
         audioButton.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
       }
-      await MediaTools.mediaRecorder("audio");
     }
     if (this.video) {
       const videoElement = document.createElement("video");
