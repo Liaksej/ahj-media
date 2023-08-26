@@ -293,7 +293,7 @@ export class Popup {
   }
 
   public validator(text: string) {
-    if (/(?:(?:\[)?(\d+\.\d+),\s*−?(\d+\.\d+)(?:\])?)/g.test(text)) {
+    if (/^(?:(?:\[)?(\d+\.\d+),\s*−?(\d+\.\d+)(?:\])?$)/g.test(text)) {
       this.ckeckValidity = true;
       return;
     }

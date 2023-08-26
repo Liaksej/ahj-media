@@ -131,6 +131,7 @@ export class MediaTools {
       const blob = new Blob(chunks);
       if (mediaElement instanceof HTMLMediaElement) {
         if (witchButton === "stop") {
+          await vault.at(-1)!.getGeo();
           mediaElement.src = URL.createObjectURL(blob);
           mediaElement.classList.add("w-3/5");
           mediaElement.setAttribute("width", "500");
@@ -155,43 +156,44 @@ export class MediaTools {
       }
     });
 
-    videoButton?.addEventListener("click", async (event) => {
+    const onDestroy = () => {
+      recorder.stop();
+      activeStream.forEach((stream) => {
+        stream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      });
+
+      videoButton!.innerHTML = `<i class="fa-solid fa-video"></i>`;
+      audioButton!.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
+      videoButton?.removeEventListener("click", onStopClick);
+      audioButton?.removeEventListener("click", onCancelClick);
+    };
+
+    const onStopClick = (event: Event) => {
       if (
         event.target instanceof HTMLElement &&
         (event.target.firstElementChild?.classList.contains("fa-stop") ||
           event.target.classList.contains("fa-stop"))
       ) {
         witchButton = "stop";
-        recorder.stop();
-        activeStream.forEach((stream) => {
-          stream.getTracks().forEach((track) => {
-            track.stop();
-          });
-        });
-
-        videoButton!.innerHTML = `<i class="fa-solid fa-video"></i>`;
-        audioButton!.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
+        onDestroy();
       }
-    });
+    };
 
-    audioButton?.addEventListener("click", async (event) => {
+    const onCancelClick = (event: Event) => {
       if (
         event.target instanceof HTMLElement &&
         (event.target.firstElementChild?.classList.contains("fa-xmark") ||
           event.target.classList.contains("fa-xmark"))
       ) {
         witchButton = "cancel";
-        recorder.stop();
-        activeStream.forEach((stream) => {
-          stream.getTracks().forEach((track) => {
-            track.stop();
-          });
-        });
-
-        videoButton!.innerHTML = `<i class="fa-solid fa-video"></i>`;
-        audioButton!.innerHTML = `<i class="fa-solid fa-microphone"></i>`;
+        onDestroy();
       }
-    });
+    };
+
+    videoButton?.addEventListener("click", onStopClick);
+    audioButton?.addEventListener("click", onCancelClick);
 
     recorder.start();
   }

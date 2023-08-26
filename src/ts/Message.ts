@@ -58,38 +58,6 @@ export class Message {
       )}</div>`;
     chat.appendChild(messageDomElement);
 
-    const geoElement: HTMLDivElement | null =
-      messageDomElement.querySelector(".geo-of-message");
-    if (geoElement && this.geo !== null && this.geo !== undefined) {
-      if (typeof this.geo === "object") {
-        geoElement.textContent = `${this.geo.latitude}, ${this.geo.longitude}`;
-      }
-      if (typeof this.geo === "string") {
-        geoElement.textContent = `${this.geo}`;
-      }
-    } else {
-      MediaTools.getCurrentGeoposition()
-        .then((geo) => {
-          if (geoElement && geo! instanceof GeolocationPosition) {
-            this.geo = {
-              latitude: geo.coords.latitude,
-              longitude: geo.coords.longitude,
-            };
-            geoElement.textContent = `${geo!.coords.latitude}, ${
-              geo!.coords.longitude
-            }`;
-          }
-        })
-        .catch((error) => {
-          console.error("Could not fetch geo data:", error?.code);
-          this.geo = error.message;
-          new Popup().popupCreator();
-          if (geoElement) {
-            geoElement.textContent = `${error?.message}`;
-          }
-        });
-    }
-
     const forInsert = messageDomElement.querySelector(".text-of-message");
 
     if (this.audio) {
@@ -106,8 +74,7 @@ export class Message {
         videoButton.innerHTML = `<i class="fa-solid fa-stop"></i>`;
         audioButton.innerHTML = `<i class="fa-solid fa-xmark"></i>`;
       }
-    }
-    if (this.video) {
+    } else if (this.video) {
       const videoElement = document.createElement("video");
       videoElement.classList.add("video_container", "w-3/5");
       forInsert?.insertBefore(
@@ -134,6 +101,34 @@ export class Message {
         }
         await MediaTools.mediaRecorder("video");
       }
+    } else {
+      await this.getGeo();
     }
+  }
+  public async getGeo() {
+    const geoElement: Element | undefined = Array.from(
+      document.querySelectorAll(".geo-of-message"),
+    ).at(-1);
+
+    MediaTools.getCurrentGeoposition()
+      .then((geo) => {
+        if (geoElement && geo! instanceof GeolocationPosition) {
+          this.geo = {
+            latitude: geo.coords.latitude,
+            longitude: geo.coords.longitude,
+          };
+          geoElement.textContent = `${geo!.coords.latitude}, ${
+            geo!.coords.longitude
+          }`;
+        }
+      })
+      .catch((error) => {
+        console.error("Could not fetch geo data:", error?.code);
+        this.geo = error.message;
+        new Popup().popupCreator();
+        if (geoElement) {
+          geoElement.textContent = `${error?.message}`;
+        }
+      });
   }
 }
