@@ -63,7 +63,7 @@
     /* Advanced Options */
     "forceConsistentCasingInFileNames": true  /* Disallow inconsistently-cased references to the same file. */
   },
-  "exclude": [
-    "src/ts/__tests__",
-  ]
+//  "exclude": [
+//    "src/ts/__tests__",
+//  ]
 }
